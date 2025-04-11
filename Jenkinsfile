@@ -1,5 +1,5 @@
 pipeline {
-    def dockerImage
+    
     agent any
 	tools {
         maven "MAVEN3.9"
@@ -64,11 +64,11 @@ pipeline {
                     waitForQualityGate abortPipeline: true
                 }
             }
-        }
+        } 
         stage('Building Docker Image') {
             steps{
               script {
-                dockerImage = docker.build registry + ":V$BUILD_NUMBER"
+                def dockerImage = docker.build registry + ":V$BUILD_NUMBER"
               }
             }
         }
@@ -76,8 +76,8 @@ pipeline {
           steps{
             script {
               docker.withRegistry( '', registryCredential ) {
-                dockerImage.push("V$BUILD_NUMBER")
-                dockerImage.push('latest')
+                def dockerImage.push("V$BUILD_NUMBER")
+                def dockerImage.push('latest')
               }
             }
           }
