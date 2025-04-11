@@ -1,5 +1,5 @@
 pipeline {
-
+    def dockerImage
     agent any
 	tools {
         maven "MAVEN3.9"
