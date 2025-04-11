@@ -69,6 +69,7 @@ pipeline {
             steps{
               script {
                 def dockerImage = docker.build registry + ":V$BUILD_NUMBER"
+                env.dockerImage = dockerImage
               }
             }
         }
@@ -76,8 +77,8 @@ pipeline {
           steps{
             script {
               docker.withRegistry( '', registryCredential ) {
-                def dockerImage.push("V$BUILD_NUMBER")
-                def dockerImage.push('latest')
+                env.dockerImage.push("V$BUILD_NUMBER")
+                env.dockerImage.push('latest')
               }
             }
           }
