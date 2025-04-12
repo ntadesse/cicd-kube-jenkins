@@ -76,15 +76,10 @@ pipeline {
         stage('Upload Docker Image') {
             steps {
                 script {
-                    try {
                         docker.withRegistry( '', registryCredential ) {
                             dockerImage.push("V$BUILD_NUMBER")
                             dockerImage.push('latest')
-                        }
-                    } catch (Exception e) {
-                        echo "Error pushing Docker image: ${e.getMessage()}"
-                        currentBuild.result = 'FAILURE'
-                    }
+                    } 
                 }
             }
         }
