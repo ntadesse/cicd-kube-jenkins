@@ -68,7 +68,7 @@ pipeline {
         stage('Building Docker Image') {
             steps{
               script {
-                def dockerImage = docker.build registry + ":V$BUILD_NUMBER"
+                def dockerImage = docker.build("${registry}:V${BUILD_NUMBER}")
                 env.dockerImage = dockerImage
               }
             }
@@ -76,20 +76,18 @@ pipeline {
         stage('Upload Docker Image') {
             steps {
                 script {
-                        docker.withRegistry( '', registryCredential ) {
-                            dockerImage.push("V$BUILD_NUMBER")
-                            dockerImage.push('latest')
+                        docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
+                           dockerImage.push("V$BUILD_NUMBER")
+                           dockerImage.push('latest')
                     } 
                 }
             }
         }
-        /*
         stage('Remove Unused Docker Image') {
           steps{
-            sh "docker rmi $registry:V$BUILD_NUMBER"
+            sh "docker rmi ${registry}:V${BUILD_NUMBER}"
           }
         }
-        */
         stage('Kubernetes Deploy') {
 	       agent { label 'Helm' }
                 steps {
