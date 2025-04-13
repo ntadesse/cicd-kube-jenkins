@@ -7,6 +7,7 @@ pipeline {
     environment {
         registry = "ntaddese/vproappdock"
         registryCredential = 'dockerhub'
+        KUBECONFIG = credentials('kubeconfig')
     }
 
     stages{
@@ -90,7 +91,12 @@ pipeline {
         stage('Kubernetes Deploy') {
 	       agent { label 'Helm' }
                 steps {
-                        sh "helm upgrade --install --force vprofile-stack helm/vprofilecharts --set appimage=${registry}:V${BUILD_NUMBER} --namespace app01-prod"
+                    withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
+                        sh '''
+                        export KUBECONFIG=/root/.kube/admin.conf
+                        helm upgrade --install --force vprofile-stack helm/vprofilecharts --set appimage=${registry}:V${BUILD_NUMBER} --namespace app01-prod 
+                        '''
+                 } 
             }
         }
     }
