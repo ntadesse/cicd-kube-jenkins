@@ -68,19 +68,16 @@ pipeline {
         stage('Building Docker Image') {
             steps{
               script {
-                def dockerImage = docker.build("${registry}:V${BUILD_NUMBER}")
-                env.dockerImage = dockerImage
-
-                echo "dockerImage type: ${dockerImage.getClass().name}"
+                dockerImage = docker.build("${registry}:V${BUILD_NUMBER}")
               }
             }
         }
         stage('Upload Docker Image') {
             steps {
                 script {
-                        docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-                           env.dockerImage.push("V${BUILD_NUMBER}")
-                           env.dockerImage.push('latest')
+                        docker.withRegistry( '', registryCredential ) {
+                           dockerImage.push("V${BUILD_NUMBER}")
+                           dockerImage.push('latest')
                     } 
                 }
             }
