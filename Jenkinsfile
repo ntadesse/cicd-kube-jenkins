@@ -70,6 +70,8 @@ pipeline {
               script {
                 def dockerImage = docker.build("${registry}:V${BUILD_NUMBER}")
                 env.dockerImage = dockerImage
+
+                echo "dockerImage type: ${dockerImage.getClass().name}"
               }
             }
         }
@@ -77,8 +79,8 @@ pipeline {
             steps {
                 script {
                         docker.withRegistry( 'https://index.docker.io/v1/', registryCredential ) {
-                           dockerImage.push("V${BUILD_NUMBER}")
-                           dockerImage.push('latest')
+                           env.dockerImage.push("V${BUILD_NUMBER}")
+                           env.dockerImage.push('latest')
                     } 
                 }
             }
