@@ -23,6 +23,21 @@ pipeline {
                 }
             }
         }
+        stage('OWASP Dependency Check') {
+                steps {
+                    dependencyCheck additionalArguments: '''
+                       --scan \'./target\'
+                       --out \'./\'
+                       --format \'ALL\' \
+                       --prettyPrint''', odcInstallation: 'OWASP-DepCheck-10'
+                    dependencyCheckPublisher pattern: failedTotalCritical:1, pattern: 'dependency-check-report.xml', stopBuild: true
+                 }
+                 post {
+                    always {
+                        archiveArtifacts artifacts: 'dependency-check-report.*', allowEmptyArchive: true
+                }
+            }
+       }
         stage('UNIT TEST'){
             steps {
                 sh 'mvn test'
@@ -139,5 +154,25 @@ pipeline {
                  } 
             }
         }
+    }
+    post {
+        always {
+            // Publish JUnit test results
+            junit allowEmptyResults: true, studioRetention: '',  testResults: 'test-results.xml'
+            junit allowEmptyResults: true, studioRetention: '',  testResults: 'dependency-check-junit.xml'
+            junit allowEmptyResults: true, studioRetention: '',  testResults: 'trivy-image-CRITICAL-results.xml'
+            junit allowEmptyResults: true, studioRetention: '',  testResults: 'trivy-image-MEDIUM-results.xml'
+
+            // Publish HTML reports
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'zap_report.html', reportName: 'DAST ZAP Report HTML', reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.', reportName: 'Trivy Vulnerability Report (Critical)', reportTitles: '', useWrapperFileDirectly: true])
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.', reportName: 'Trivy Vulnerability Report (Medium)', reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check Report HTML', reportTitles: '', useWrapperFileDirectly: true])
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'coverage/local-result/', reportFiles: 'index.html', reportName: 'Code Coverage Report HTML', reportTitles: '', useWrapperFileDirectly: true])
+            // Archive all reports
+            archiveArtifacts artifacts: '**/*.html, **/*.xml', allowEmptyArchive: true
+       }
     }
 }
