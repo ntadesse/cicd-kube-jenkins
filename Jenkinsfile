@@ -3,6 +3,7 @@ pipeline {
     agent any
 	tools {
         maven "MAVEN3.9"
+        dependencyCheck "OWASP-DepCheck-10"
     }
     environment {
         registry = "ntaddese/vproappdock"
