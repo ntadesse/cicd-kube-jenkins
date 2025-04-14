@@ -73,6 +73,46 @@ pipeline {
               }
             }
         }
+        stage ('Trivy Vulnerability Scan') {
+            steps {
+                sh '''
+                trivy image "${registry}:V${BUILD_NUMBER}" \
+                    --severity LOW,MEDIUM \
+                    --exit-code 0 \
+                    --quiet \
+                    --format json -o trivy-image-MEDIUM-results.json
+               
+                trivy image "${registry}:V${BUILD_NUMBER}"  \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    --quiet \
+                    --format json -o trivy-image-CRITICAL-results.json
+                
+            '''
+            }
+            post {
+                always {
+                    sh '''
+                    trivy convert \
+                        --format template  --template "@/usr/local/share/trivy/templates/html.tpl" \
+                        --output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
+                    
+                    trivy convert \
+                        --format template  --template "@/usr/local/share/trivy/templates/html.tpl" \
+                        --output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+                    
+                    trivy convert \
+                        --format template  --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                        --output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
+                    
+                    trivy convert \
+                        --format template  --template "@/usr/local/share/trivy/templates/junit.tpl" \
+                        --output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
+                
+                    '''
+                }
+            }
+        }
         stage('Upload Docker Image') {
             steps {
                 script {
