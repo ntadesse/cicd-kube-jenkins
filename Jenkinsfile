@@ -158,7 +158,7 @@ pipeline {
     post {
         always {
             // Publish JUnit test results
-            junit allowEmptyResults: true, stdioRetention: '',  testResults: 'test-results.xml'
+            junit allowEmptyResults: true, stdioRetention: '',  testResults: '**/target/surefire-reports/*.xml'
             junit allowEmptyResults: true, stdioRetention: '',  testResults: 'dependency-check-junit.xml'
             junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-CRITICAL-results.xml'
             junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-MEDIUM-results.xml'
@@ -170,7 +170,7 @@ pipeline {
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.', reportName: 'Trivy Vulnerability Report (Medium)', reportTitles: '', useWrapperFileDirectly: true])
 
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check Report HTML', reportTitles: '', useWrapperFileDirectly: true])
-            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'coverage/local-result/', reportFiles: 'index.html', reportName: 'Code Coverage Report HTML', reportTitles: '', useWrapperFileDirectly: true])
+            
             // Archive all reports
             archiveArtifacts artifacts: '**/*.html, **/*.xml', allowEmptyArchive: true
        }
