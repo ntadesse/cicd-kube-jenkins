@@ -160,10 +160,10 @@ pipeline {
     post {
         always {
             // Publish JUnit test results
-           // junit allowEmptyResults: true, stdioRetention: '',  testResults: '**/target/surefire-reports/*.xml'
-           // junit allowEmptyResults: true, stdioRetention: '',  testResults: 'dependency-check-junit.xml'
-            junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-CRITICAL-results.xml'
-            junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-MEDIUM-results.xml'
+            junit allowEmptyResults: true, stdioRetention: '',  testResults: '**/target/surefire-reports/*.xml'
+           //junit allowEmptyResults: true, stdioRetention: '',  testResults: 'dependency-check-junit.xml'
+           //junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-CRITICAL-results.xml'
+           //junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-MEDIUM-results.xml'
 
             // Publish HTML reports
            // publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'zap_report.html', reportName: 'DAST ZAP Report HTML', reportTitles: '', useWrapperFileDirectly: true])
