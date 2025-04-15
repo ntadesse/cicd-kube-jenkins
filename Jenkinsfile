@@ -160,7 +160,7 @@ pipeline {
     post {
         always {
             // Publish JUnit test results
-            junit allowEmptyResults: true, stdioRetention: '',  testResults: '**/target/surefire-reports/*.xml'
+           // junit allowEmptyResults: true, stdioRetention: '',  testResults: '**/target/surefire-reports/*.xml'
            // junit allowEmptyResults: true, stdioRetention: '',  testResults: 'dependency-check-junit.xml'
             junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-CRITICAL-results.xml'
             junit allowEmptyResults: true, stdioRetention: '',  testResults: 'trivy-image-MEDIUM-results.xml'
