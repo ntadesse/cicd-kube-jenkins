@@ -165,14 +165,15 @@ pipeline {
     }
     post {
         always {
-                // Slack Notifications
-        try {
-            echo 'Slack Notifications.'
-            slackSend channel: '#jenkinscicd',
-                color: COLOR_MAP[currentBuild.currentResult],
-                message: "*${currentBuild.currentResult}:*Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
-        } catch (Exception e) {
-            echo "Slack notification failed: ${e.getMessage()}"
+        script {
+            try {
+                echo 'Slack Notifications.'
+                slackSend channel: '#jenkinscicd',
+                    color: COLOR_MAP[currentBuild.currentResult],
+                    message: "*${currentBuild.currentResult}:*Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+            } catch (Exception e) {
+                echo "Slack notification failed: ${e.getMessage()}"
+            }
         }
             // Publish JUnit test results
             junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
