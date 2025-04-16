@@ -1,8 +1,14 @@
+def COLOR_MAP = [
+  'SUCCESS': 'good',
+  'FAILURE': 'danger',
+  ]
 pipeline {
     
     agent any
 	tools {
         maven "MAVEN3.9"
+        jdk "JDK17"
+        nodejs "NodeJS19"
     }
     environment {
         registry = "ntaddese/vproappdock"
@@ -72,12 +78,12 @@ pipeline {
                    -Dsonar.projectName=vprofile-kube \
                    -Dsonar.projectVersion=1.0 \
                    -Dsonar.sources=src/ \
+                   -Dsonar.java.libraries=target/vprofile-v2/WEB-INF/lib/*.jar \
                    -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/ \
                    -Dsonar.junit.reportsPath=target/surefire-reports/ \
                    -Dsonar.jacoco.reportsPath=target/jacoco.exec \
                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
                 }
-
                 timeout(time: 10, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
@@ -159,6 +165,12 @@ pipeline {
     }
     post {
         always {
+                echo 'Slack Notifications.'
+                slackSend channel: '#jenkinscicd',
+                    color: COLOR_MAP[currentBuild.currentResult],
+                    message: "*${currentBuild.currentResult}:*Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+            }
+        {
             // Publish JUnit test results
             junit allowEmptyResults: true, stdioRetention: '',  testResults: '**/target/surefire-reports/*.xml'
            //junit allowEmptyResults: true, stdioRetention: '',  testResults: 'dependency-check-junit.xml'
