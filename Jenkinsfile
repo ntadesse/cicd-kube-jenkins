@@ -175,20 +175,9 @@ pipeline {
                 echo "Slack notification failed: ${e.getMessage()}"
             }
         }
-            // Publish JUnit test results
-            junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
-           //junit allowEmptyResults: true, testResults: 'dependency-check-junit.xml'
-            junit allowEmptyResults: true, testResults: 'trivy-image-CRITICAL-results.xml'
-            junit allowEmptyResults: true, testResults: 'trivy-image-MEDIUM-results.xml'
-
             // Publish HTML reports
-           // publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'zap_report.html', reportName: 'DAST ZAP Report HTML', reportTitles: '', useWrapperFileDirectly: true])
-
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Vulnerability Report (Critical)', reportTitles: '', useWrapperFileDirectly: true])
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Vulnerability Report (Medium)', reportTitles: '', useWrapperFileDirectly: true])
-
-           // publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'dependency-check-jenkins.html', reportName: 'Dependency Check Report HTML', reportTitles: '', useWrapperFileDirectly: true])
-            
             // Archive all reports
             archiveArtifacts artifacts: '**/*.html, **/*.xml', allowEmptyArchive: true
        }
