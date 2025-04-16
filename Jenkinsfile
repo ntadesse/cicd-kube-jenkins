@@ -8,7 +8,7 @@ pipeline {
 	tools {
         maven "MAVEN3.9"
         jdk "JDK17"
-        nodejs "NodeJS19"
+        nodejs "NodeJS17"
     }
     environment {
         registry = "ntaddese/vproappdock"
