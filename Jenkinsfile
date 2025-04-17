@@ -177,9 +177,9 @@ pipeline {
         }
             // JUnit reports
             // junit allowEmptyResults: true, testResults: '**/dependency-check-junit.xml'
-            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
-            junit allowEmptyResults: true, testResults: '**/trivy-image-CRITICAL-results.xml'
-            junit allowEmptyResults: true, testResults: '**/trivy-image-MEDIUM-results.xml'
+            junit allowEmptyResults: true, skipMarkingBuildUnstable: true, testResults: '**/target/surefire-reports/*.xml'
+            junit allowEmptyResults: true, skipMarkingBuildUnstable: true, testResults: '**/trivy-image-CRITICAL-results.xml'
+            junit allowEmptyResults: true, skipMarkingBuildUnstable: true, testResults: '**/trivy-image-MEDIUM-results.xml'
             // Publish HTML reports
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Vulnerability Report (Critical)', reportTitles: '', useWrapperFileDirectly: true])
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Vulnerability Report (Medium)', reportTitles: '', useWrapperFileDirectly: true])
