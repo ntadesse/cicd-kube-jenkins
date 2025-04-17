@@ -18,7 +18,7 @@ pipeline {
 
     stages{
 
-        stage('BUILD'){
+        stage('CODE BUILD'){
             steps {
                 sh 'mvn clean install -DskipTests'
             }
@@ -29,7 +29,6 @@ pipeline {
                 }
             }
         }
-        /*
         stage('OWASP Dependency Check') {
                 steps {
                     dependencyCheck additionalArguments: '''
@@ -45,13 +44,12 @@ pipeline {
                 }
             }
        }
-       */
-        stage('UNIT TEST'){
+        stage('CODE UNIT TEST'){
             steps {
                 sh 'mvn test'
             }
         }
-        stage('INTEGRATION TEST'){
+        stage('CODE INTEGRATION TEST'){
             steps {
                 sh 'mvn verify -DskipUnitTests'
             }
@@ -96,7 +94,7 @@ pipeline {
               }
             }
         }
-        stage ('Trivy Vulnerability Scan') {
+        stage ('Vulnerability Scan') {
             steps {
                 sh '''
                 trivy image "${registry}:V${BUILD_NUMBER}" \
@@ -175,6 +173,11 @@ pipeline {
                 echo "Slack notification failed: ${e.getMessage()}"
             }
         }
+            // JUnit reports
+            // junit allowEmptyResults: true, stdioRetention: '',  testResults: 'dependency-check-junit.xml'
+            junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+            junit allowEmptyResults: true, testResults: '**/trivy-image-CRITICAL-results.xml'
+            junit allowEmptyResults: true, testResults: '**/trivy-image-MEDIUM-results.xml'
             // Publish HTML reports
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Vulnerability Report (Critical)', reportTitles: '', useWrapperFileDirectly: true])
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './', reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Vulnerability Report (Medium)', reportTitles: '', useWrapperFileDirectly: true])
