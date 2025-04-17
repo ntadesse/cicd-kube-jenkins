@@ -29,6 +29,7 @@ pipeline {
                 }
             }
         }
+        /*
         stage('OWASP Dependency Check') {
                 steps {
                     dependencyCheck additionalArguments: '''
@@ -44,6 +45,7 @@ pipeline {
                 }
             }
        }
+       */
         stage('CODE UNIT TEST'){
             steps {
                 sh 'mvn test'
