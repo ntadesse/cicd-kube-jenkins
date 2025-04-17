@@ -176,7 +176,7 @@ pipeline {
             }
         }
             // JUnit reports
-            junit allowEmptyResults: true, testResults: '**/dependency-check-junit.xml'
+            // junit allowEmptyResults: true, testResults: '**/dependency-check-junit.xml'
             junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
             junit allowEmptyResults: true, testResults: '**/trivy-image-CRITICAL-results.xml'
             junit allowEmptyResults: true, testResults: '**/trivy-image-MEDIUM-results.xml'
